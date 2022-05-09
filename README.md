@@ -1,38 +1,19 @@
-<p align="center"><img src="https://i.imgur.com/a9QWW0v.png"></p>
+# Network Watcher
+Very simple app made with Electron to constantly ping hosts and know their status
 
-## Usage
+## Config
+To add, delete or modify hosts use the file `config.json`
+> If the file does't exists it will be created on application first run, you can also create it manually
 
-### Create an App
-
+## Development
+Install all dependencies and them simply run:
 ```
-# with npx
-$ npx create-nextron-app my-app --example with-typescript-tailwindcss
-
-# with yarn
-$ yarn create nextron-app my-app --example with-typescript-tailwindcss
-
-# with pnpx
-$ pnpx create-nextron-app my-app --example with-typescript-tailwindcss
+npm run dev
 ```
 
-### Install Dependencies
-
+## Production
+Install all dependencies, then run:
 ```
-$ cd my-app
-
-# using yarn or npm
-$ yarn (or `npm install`)
-
-# using pnpm
-$ pnpm install --shamefully-hoist
+npm run build
 ```
-
-### Use it
-
-```
-# development mode
-$ yarn dev (or `npm run dev` or `pnpm run dev`)
-
-# production build
-$ yarn build (or `npm run build` or `pnpm run build`)
-```
+> Generated files will be at `dist` folder
