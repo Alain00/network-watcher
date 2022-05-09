@@ -1,0 +1,12 @@
+appId: com.alain00.metwork-watcher
+productName: Network Watcher
+copyright: Copyright © 2022 Alain Alvarez
+directories:
+  output: dist
+  buildResources: resources
+files:
+  - from: .
+    filter:
+      - package.json
+      - app
+publish: null
