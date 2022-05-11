@@ -4,4 +4,5 @@ export interface IConfig {
 
 export interface Host {
   address: string;
+  enable?: boolean;
 }

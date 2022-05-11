@@ -1,14 +1,16 @@
-import classNames from 'classnames';
 import Head from 'next/head';
 import React from 'react';
+import { Host } from '../../types/config';
 import { Header } from '../components/Header';
 import { HostInfo } from '../components/HostInfo';
 import { useConfig } from '../hooks/useConfig';
-import { usePing } from '../hooks/usePing';
-import { usePingAlert } from '../hooks/usePingAlert';
 
 function Home() {
   const config = useConfig();
+
+  const handleRemoveHost = (host: Host) => {
+    config.removeHost(host)
+  }
 
   return (
     <React.Fragment>
@@ -17,10 +19,17 @@ function Home() {
       </Head>
       <Header />
       <div
-        className="flex max-w-full overflow-x-auto justify-start snap-x pb-10 styled-scrollbar"
+        className="flex max-w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 justify-center pb-10 overflow-y-auto styled-scrollbar"
       >
-        {config?.hosts.map(h => (
-          <HostInfo className="w-[200px] mx-10 snap-center" host={h} />
+        {config?.config?.hosts.map((h, index) => (
+          <HostInfo 
+            key={index}
+            className="mx-10 justify-self-center" 
+            onRemove={() => handleRemoveHost(h)}
+            enable={h.enable}
+            onDisable={() => config.updateHost({...h, enable: false})}
+            onEnable={() => config.updateHost({...h, enable: true})}
+            host={h} />
         ))}
       </div>
     </React.Fragment>

@@ -26,6 +26,11 @@ export class Config {
     public config: IConfig = loadConfigFile()
   ) {}
 
+  public updateConfig(newConfig: IConfig) {
+    this.config = newConfig;
+    replaceConfigFile(this.config);
+  }
+
   public addHost(host: Host) {
     this.config.hosts.push(host);
     replaceConfigFile(this.config);

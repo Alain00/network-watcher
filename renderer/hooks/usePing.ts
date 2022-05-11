@@ -38,6 +38,11 @@ export const usePing = (host: string, interval: number = 5000) : UsePingResult =
           count: prev.count + 1
         }
       })
+    }else {
+      setPingResult({
+        ...result,
+        time: 999
+      })
     }
   }
 

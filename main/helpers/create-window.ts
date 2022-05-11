@@ -2,10 +2,13 @@ import {
   screen,
   BrowserWindow,
   BrowserWindowConstructorOptions,
+  ipcMain,
 } from 'electron';
 import Store from 'electron-store';
 
-export default (windowName: string, options: BrowserWindowConstructorOptions): BrowserWindow => {
+const isProd: boolean = process.env.NODE_ENV === 'production';
+
+export default async (windowName: string, options: BrowserWindowConstructorOptions, path: string = '/'): Promise<BrowserWindow> => {
   const key = 'window-state';
   const name = `window-state-${windowName}`;
   const store = new Store({ name });
@@ -14,7 +17,7 @@ export default (windowName: string, options: BrowserWindowConstructorOptions): B
     height: options.height,
   };
   let state = {};
-  let win;
+  let win: BrowserWindow;
 
   const restore = () => store.get(key, defaultSize);
 
@@ -78,7 +81,22 @@ export default (windowName: string, options: BrowserWindowConstructorOptions): B
   };
   win = new BrowserWindow(browserOptions);
 
+  ipcMain.on(`open-${windowName}-window`, (event) => {
+    win.show();
+  })
+
+  ipcMain.on(`close-${windowName}-window`, (event) => {
+    win.hide();
+  })
+
   win.on('close', saveState);
+
+  if (isProd) {
+    await win.loadURL(`app://./${path}.html`);
+  } else {
+    const port = process.argv[2];
+    await win.loadURL(`http://localhost:${port}/${path}`);
+  }
 
   return win;
 };

@@ -1,0 +1,19 @@
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm install
+      - run: npm run build
+      - uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          path: dist/*.exe
+
+

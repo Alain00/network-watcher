@@ -1,4 +1,4 @@
-import { app, ipcMain, ipcRenderer, Tray } from 'electron';
+import { app, BrowserWindow, ipcMain, ipcRenderer, Tray } from 'electron';
 import serve from 'electron-serve';
 import { createWindow } from './helpers';
 import { Config } from './helpers/config';
@@ -17,22 +17,31 @@ if (isProd) {
 (async () => {
   await app.whenReady();
 
-  const mainWindow = createWindow('main', {
+  const mainWindow = await createWindow('main', {
     width: 1000,
     height: 600,
-  });
-
-  if (isProd) {
-    await mainWindow.loadURL('app://./home.html');
-  } else {
-    const port = process.argv[2];
-    await mainWindow.loadURL(`http://localhost:${port}/home`);
-    mainWindow.webContents.openDevTools();
-  }
+  }, '/home');
 
   ipcMain.on('request-config', (event) => {
-    mainWindow.webContents.send('load-config', config.config);
+    event.sender.send('load-config', config.config);
   })
+
+  ipcMain.on('update-config', (event, newConfig) => {
+    config.updateConfig(newConfig)
+    const windows = BrowserWindow.getAllWindows()
+    for (const w of windows) w.webContents.send('load-config', config.config);
+  })
+
+  createWindow('add-host', {
+    parent: mainWindow,
+    modal: true,
+    frame: false,
+    show: false,
+    resizable: false,
+    movable: false,
+    center: true,
+    useContentSize: true,
+  }, '/add-host');
 
 
   mainWindow.on('minimize', (e) => {

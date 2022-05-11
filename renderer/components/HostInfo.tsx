@@ -7,18 +7,34 @@ import { Button } from "./Button"
 export interface HostInfoProps {
   host: Host;
   className?: string;
+  enable?: boolean;
+  onEnable?: () => void;
+  onDisable?: () => void;
+  onRemove?: () => void;
 }
 
 export const HostInfo : React.FC<HostInfoProps> = (props) => {
   const ping = usePing(props.host.address)
-  const status = usePingAlert(ping, 100)
+  const status = usePingAlert(ping, {
+    maxTime: 100,
+    paused: !props.enable,
+  })
+
+  const handleEnable = () => {
+    props.onEnable?.()
+  }
+
+  const handleDisable = () => {
+    status.stopSirene()
+    props.onDisable?.()
+  }
 
   return (
     <div className={classNames(
-      "flex flex-col mt-8 font-bold justify-center items-center p-4 group",
+      "flex flex-col mt-8 font-bold justify-center items-center p-4",
       props.className
     )}>
-      <div className="text-6xl mb-10 group-hover:scale-150 transition">
+      <div className="text-6xl mb-10 hover:scale-150 transition">
         {status.status === 'normal' ?
           "😁"
         : 
@@ -73,12 +89,19 @@ export const HostInfo : React.FC<HostInfoProps> = (props) => {
           </tr>
         </tbody>
       </table>
-        <div className="flex justify-center items-center px-4 mt-5">
-          {status.paused ?
-            <Button title="Resume Alarm" onClick={status.resumeAlert}>🔈</Button>
+        <div className="grid grid-cols-2 gap-2 justify-center items-center px-4 mt-5">
+          {!props.enable ?
+            <Button title="Enable Alarm" onClick={handleEnable}>
+              <span className="">Enable</span>
+            </Button>
           : 
-            <Button title="Pause Alarm" onClick={status.pauseAlert}>🔇</Button>
+          <Button title="Disable Alarm" onClick={handleDisable} className="opacity-40 hover:opacity-80">
+              <span className="">Disable</span>
+            </Button>
           }
+          <Button className="text-red-500" onClick={props.onRemove}>
+            Remove
+          </Button>
         </div>
     </div>
   )
