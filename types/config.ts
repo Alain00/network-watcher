@@ -1,8 +1,10 @@
 export interface IConfig {
-  hosts: Host[]
+  hosts: Host[],
+  compact?: boolean,
 }
 
 export interface Host {
   address: string;
   enable?: boolean;
+  maxTime?: number;
 }

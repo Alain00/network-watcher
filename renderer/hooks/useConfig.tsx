@@ -8,6 +8,7 @@ interface ConfigContextValue {
   addHost: (host: Host) => void
   removeHost: (host: Host) => void
   updateHost: (host: Host) => void
+  updateCompact: (compact: boolean) => void
 }
 
 const initialValue : ConfigContextValue = {
@@ -15,6 +16,7 @@ const initialValue : ConfigContextValue = {
   addHost: () => {},
   removeHost: () => {},
   updateHost: () => {},
+  updateCompact: () => {},
 }
 
 const ConfigContext = React.createContext<ConfigContextValue>(initialValue);
@@ -62,6 +64,13 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
     store.update(newConfig);
   }, [config])
 
+  const updateCompact = useCallback((value: boolean) => {
+    const newConfig = {...config};
+    newConfig.compact = value;
+    setConfig(newConfig);
+    store.update(newConfig);
+  }, [config])
+
   const value: ConfigContextValue = useMemo(() => {
     return {  
       config,
@@ -69,8 +78,10 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
       removeHost,
       updateHost,
       isLoading,
+      updateCompact
     }
   }, [config, addHost, removeHost, updateHost, isLoading])
+  
 
   return (
     <ConfigContext.Provider value={value}>

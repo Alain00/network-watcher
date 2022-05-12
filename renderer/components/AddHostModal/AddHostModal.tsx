@@ -17,6 +17,7 @@ const AddHostModal = ({
     e.preventDefault();
     const host : Host = {
       address: e.currentTarget.elements['address'].value,
+      maxTime: parseInt(e.currentTarget.elements['maxTime'].value),
     }
     onSubmit?.(host);
     handleClose();
@@ -31,7 +32,14 @@ const AddHostModal = ({
       <h1 className="text-lg font-bold">Add Host</h1>
       <small>Add host information below</small>
       <form onSubmit={handleSubmit} className="flex flex-col justify-center items-center mt-6">
-        <Input name="address" placeholder="Address" className="w-full" required />
+        <div className="mt-2">
+          <Input name="address" placeholder="Address" className="w-full" required />
+          <small className="opacity-40">Host address, it can be and ip address or a hostname</small>
+        </div>
+        <div className="mt-2">
+          <Input name="maxTime" placeholder="Max time" className="w-full" defaultValue="100" required type="number" />
+          <small className="opacity-40">Max time in ms to alert</small>
+        </div>
         <div className="mt-6 grid grid-cols-2 gap-2 w-full">
           <Button type="submit" className="w-full">
             Add

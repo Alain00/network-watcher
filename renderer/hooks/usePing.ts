@@ -18,7 +18,7 @@ export const usePing = (host: string, interval: number = 5000) : UsePingResult =
   const [pingResult, setPingResult] = useState<ping.PingResponse>(null)
   const [status, setStatus] = useState<PingReport>({
     max: 0,
-    min: Number.MAX_SAFE_INTEGER,
+    min: 999,
     avg: 0,
     sum: 0,
     count: 0
