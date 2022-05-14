@@ -13,6 +13,7 @@ export interface HostInfoProps {
   onEnable?: () => void;
   onDisable?: () => void;
   onRemove?: () => void;
+  onEdit?: () => void;
 }
 
 export const HostInfo : React.FC<HostInfoProps> = (props) => {
@@ -56,7 +57,7 @@ export const HostInfo : React.FC<HostInfoProps> = (props) => {
       <span className={classNames(
         "text-lg text-gray-800",
       )}>
-        {ping?.pingResult?.host}
+        {props.host.displayName || ping?.pingResult?.host}
       </span>
       <h1 className={classNames(
         "flex",
@@ -124,21 +125,25 @@ export const HostInfo : React.FC<HostInfoProps> = (props) => {
           </tbody>
         </table>
       )}
-        <div className="grid grid-cols-2 gap-2 justify-center items-center px-4 mt-5">
+        <div className="grid grid-cols-3 gap-2 justify-center items-center px-4 mt-5">
           {!props.enable ?
-            <Button title="Enable Alarm" onClick={handleEnable}>
+            <Button title="Enable Alarm" onClick={handleEnable} variant='secondary'>
               <Icon name="play" className={!props.compact && "mr-2"}/>
-              {!props.compact && " Enable"}
+              {!props.compact && " On"}
             </Button>
           : 
-            <Button title="Disable Alarm" onClick={handleDisable} className="opacity-20">
+            <Button title="Disable Alarm" onClick={handleDisable} className="opacity-20" variant='secondary'>
               <Icon name="pause" className={!props.compact && "mr-2"} />
-              {!props.compact && " Disable"}
+              {!props.compact && " Off"}
             </Button>
           }
-          <Button className="text-red-500" onClick={props.onRemove}>
+          <Button className="text-red-500" onClick={props.onRemove} variant='secondary'>
             <Icon name="trash" className={!props.compact && "mr-2"} />
-            {!props.compact && " Remove"}
+            {!props.compact && " Bye"}
+          </Button>
+          <Button className="" onClick={props.onEdit} variant='secondary'>
+            <Icon name="pencil" className={!props.compact && "mr-2"} />
+            {!props.compact && " Edit"}
           </Button>
         </div>
     </div>
