@@ -32,18 +32,6 @@ if (isProd) {
     for (const w of windows) w.webContents.send('load-config', config.config);
   })
 
-  createWindow('add-host', {
-    parent: mainWindow,
-    modal: true,
-    frame: false,
-    show: false,
-    resizable: false,
-    movable: false,
-    center: true,
-    useContentSize: true,
-  }, '/add-host');
-
-
   mainWindow.on('minimize', (e) => {
     e.preventDefault();
     mainWindow.hide();

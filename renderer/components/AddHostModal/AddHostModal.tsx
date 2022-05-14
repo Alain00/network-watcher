@@ -40,6 +40,8 @@ const AddHostModal = ({
       address: e.currentTarget.elements['address'].value,
       maxTime: parseInt(e.currentTarget.elements['maxTime'].value),
       displayName: e.currentTarget.elements['displayName'].value,
+      onlineDisplay: e.currentTarget.elements['onlineDisplay'].value,
+      offlineDisplay: e.currentTarget.elements['offlineDisplay'].value
     };
     onSubmit?.(host);
     handleClose();
@@ -76,6 +78,22 @@ const AddHostModal = ({
             className='w-full'
           />
           <small className='opacity-40'></small>
+        </div>
+        <div className='mt-2 w-full'>
+          <Input
+            name='onlineDisplay'
+            placeholder='Online display text'
+            className='w-full'
+          />
+          <small className='opacity-40'>Text to display when the host is online</small>
+        </div>
+        <div className='mt-2 w-full'>
+          <Input
+            name='offlineDisplay'
+            placeholder='Offline display text'
+            className='w-full'
+          />
+          <small className='opacity-40'>Text to display when the host is offline</small>
         </div>
         <div className='mt-2 w-full'>
           <Input

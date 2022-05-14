@@ -1,9 +1,12 @@
 import classNames from "classnames"
 import { Host } from "../../types/config"
-import { usePing } from "../hooks/usePing"
+import { usePing, UsePingResult } from "../hooks/usePing"
 import { usePingAlert } from "../hooks/usePingAlert"
+import { HostEvent, useHostEvent, useHostEventEmmiter } from "../hooks/useHostEvents"
 import { Button } from "./Button"
 import { Icon } from "./Icon"
+import React from 'react';
+import { useContext } from "react"
 
 export interface HostInfoProps {
   host: Host;
@@ -14,10 +17,44 @@ export interface HostInfoProps {
   onDisable?: () => void;
   onRemove?: () => void;
   onEdit?: () => void;
+  pingResult?: UsePingResult;
 }
 
-export const HostInfo : React.FC<HostInfoProps> = (props) => {
-  const ping = usePing(props.host.address)
+export interface HostInfoContextValue {
+  ping: UsePingResult,
+  emmiter: ReturnType<typeof useHostEventEmmiter>
+}
+
+export const HostInfoContext = React.createContext<HostInfoContextValue>({
+  ping: null,
+  emmiter: null
+})
+
+export const HostInfo = ({
+  ...props
+}: HostInfoProps) => {
+  const ping = usePing(props.host.address);
+  const emmiter = useHostEventEmmiter(ping);
+
+  return (
+    <HostInfoContext.Provider value={{
+      ping,
+      emmiter
+    }}>
+      <HostInfoDetail 
+        {...props}
+      />
+    </HostInfoContext.Provider>
+  )
+}
+
+export const useHostInfo = () => {
+  return useContext(HostInfoContext);
+}
+
+export const HostInfoDetail : React.FC<HostInfoProps> = (props) => {
+  const {ping} = useHostInfo()
+
   const status = usePingAlert(ping, {
     maxTime: props.host.maxTime ?? 100,
     paused: !props.enable,
@@ -32,6 +69,14 @@ export const HostInfo : React.FC<HostInfoProps> = (props) => {
     props.onDisable?.()
   }
 
+  // useHostEvent(HostEvent.Online, () => {
+  //   new Notification(`Host ${props.host.displayName || props.host.address} is online`);
+  // })
+
+  // useHostEvent(HostEvent.Offline, () => {
+  //   new Notification(`Host ${props.host.displayName || props.host.address} is offline`);
+  // })
+
   return (
     <div className={classNames(
       "flex flex-col mt-8 font-bold justify-center items-center",
@@ -45,13 +90,15 @@ export const HostInfo : React.FC<HostInfoProps> = (props) => {
         "hover:scale-150 transition",
         {
           "text-4xl mb-4": props.compact,
-          "text-6xl mb-10": !props.compact
+          "text-6xl mb-10": !props.compact,
+          "text-red-900": status.status === 'alert',
+          "text-gray-400": status.status === 'normal'
         }
       )}>
         {status.status === 'normal' ?
-          "😁"
+          props.host.onlineDisplay || "😁"
         : 
-          "😡"
+          props.host.offlineDisplay || "😡"
         }
       </div>
       <span className={classNames(

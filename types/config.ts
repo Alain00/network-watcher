@@ -8,4 +8,6 @@ export interface Host {
   enable?: boolean;
   maxTime?: number;
   displayName?: string;
+  onlineDisplay?: string;
+  offlineDisplay?: string;
 }

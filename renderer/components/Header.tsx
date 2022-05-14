@@ -39,13 +39,13 @@ export const Header = ({
   
   return (
     <div className="flex p-4 gap-2">
-      <Button onClick={handleOpenAddHostWindow}>
+      <Button onClick={handleOpenAddHostWindow} variant='secondary'>
         <Icon name="plus" />
       </Button>
-      <Button onClick={toggleCompact}>
+      <Button onClick={toggleCompact} variant='secondary'>
         <Icon type={config.config.compact ? 'sr' : 'rr'} name="apps" />
       </Button>
-      <Button onClick={handleOpenSearchModal}>
+      <Button onClick={handleOpenSearchModal} variant='secondary'>
         <Icon name="search" />
       </Button>
     </div>

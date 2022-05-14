@@ -14,14 +14,16 @@ export const usePingAlert = (pingResult: UsePingResult, {
   paused = false
 }: UsePingAlertOptions) => {
   const playing = useRef(false);
-  const interval = useRef(null)
   const sound = useRef<HTMLAudioElement>(null)
   const [status, setStatus] = useState<AlertStatus>('normal')
   
   const playSirene = () => {
-    if (paused) return;
+    if (status != 'alert')
+      setStatus('alert')
 
-    setStatus('alert')
+    if (paused) return;
+    if (playing.current) return;
+
     playing.current = true;
     sound.current.play();
     sound.current.volume = 1;
@@ -29,55 +31,33 @@ export const usePingAlert = (pingResult: UsePingResult, {
   }
   
   const stopSirene = () => {
-    setStatus('normal')
+    if (status !== 'normal')
+      setStatus('normal')    
+
+    if (playing.current === false) return;
     playing.current = false;
     sound.current.pause()
-    clearInterval(interval.current)
+  }
+
+  const setupSound = () => {
+    if (!sound.current)
+      sound.current = new Audio('silo-alarm.ogg');
   }
 
   useEffect(() => {
-    if (!sound.current)
-      sound.current = new Audio('silo-alarm.ogg');
+    setupSound();
 
-    if (playing.current) {
-      if (paused) {
-        stopSirene()
-        return;
-      }
-      
-      if (!pingResult.pingResult) return;
+    let normalCondition = true;
+    normalCondition &&= pingResult.pingResult?.alive;
+    normalCondition &&= pingResult.pingResult?.time !== 'unknown'
+    normalCondition &&= pingResult.pingResult?.time < maxTime;
 
-      let condition = true;
-      condition &&= pingResult.pingResult.alive == true;
-      condition &&= pingResult.pingResult.time !== 'unknown';
-      condition &&= pingResult.pingResult.time < maxTime;
-      if (condition){
-        stopSirene()
-        return;
-      }
+    if (normalCondition) {
+      stopSirene();
     } else {
-      if (!pingResult?.pingResult){
-        playSirene()
-        return;
-      }
-
-      if (!pingResult.pingResult.alive){
-        playSirene()
-        return;
-      }
-
-      if (pingResult.pingResult.time === 'unknown'){
-        playSirene()
-        return;
-      }
-  
-      if (pingResult.pingResult.time >= maxTime) {
-        playSirene();
-        return;
-      }
+      playSirene();
     }
-
-  }, [pingResult, paused])
+  }, [pingResult.pingResult, paused])
 
   return {
     status,
